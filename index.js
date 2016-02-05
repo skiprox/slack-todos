@@ -7,17 +7,9 @@ app.use(express.static(__dirname + '/'));
 var SlackTodos = (function() {
 
 	var slackToken = ''
-	var todoList = [];
-	var channelIds = {};
-	var returnJson = {
-		'response_type': 'in_channel',
-		'text': 'Here are your Todos',
-		'attachments': [
-			{
-				'text': 'No todos!'
-			}
-		]
-	};
+	var UserIds = {};
+	var userId = null;
+	var request = null;
 
 	var listenToPort = function() {
 		app.listen(app.get('port'), function() {
@@ -27,21 +19,38 @@ var SlackTodos = (function() {
 
 	var setupListener = function() {
 		app.get('/', function(req, res) {
-			if (req.query['token'] === slackToken && false) {
-				var request = req.query['text'];
+			if (req.query['token'] === slackToken) {
+				request = req.query['text'];
+				userId = req.query['user_id'];
+				// Create the user response if undefined
+				if (UserIds.userId == undefined) {
+					UserIds.userId = {
+						'response_type': 'in_channel',
+						'text': 'Here are your Todos',
+						'attachments': [
+							{
+								'text': ''
+							}
+						],
+						'todo_list': []
+					};
+				}
 				if (request.indexOf('add') !== -1) {
 					// we add to the todolist
-					addTask(req.query['channel_id'], request.split('add ')[1]);
-					res.send(channelIds.channelId);
+					addTask(req.query['user_id'], request.split('add ')[1]);
+					res.send(UserIds.userId);
 				}
 				else if (request.indexOf('remove') !== -1) {
 					// we remove from the todolist
 					var indexInList = parseInt(request.split('remove ')[1], 10);
-					if (typeof(indexInList) == 'number' && channelIds.channelId !== undefined) {
-						removeTask(channelId, indexInList);
-						res.send(channelIds.channelId);
+					if (typeof(indexInList) == 'number') {
+						// Need to figure out how to remove properly
+						res.send(UserIds.userId);
 					}
 					res.send('Ruh Roh! Looks like you asked to remove something that does not exist!');
+				}
+				else {
+					res.send('Sorry, that is not a valid request.');
 				}
 			}
 			else {
@@ -50,33 +59,26 @@ var SlackTodos = (function() {
 		});
 	};
 
-	var addTask = function(channelId, todoText) {
-		if (channelIds.channelId == undefined) {
-			channelIds.channelId = {
-				'response_type': 'in_channel',
-				'text': 'Here are your Todos',
-				'attachments': [
-					{
-						'text': ''
-					}
-				],
-				'todo_list': []
-			};
-		}
-		channelIds.channelId['todo_list'].unshift(todoText);
-		channelIds.channelId['attachments'][0]['text'] = '';
-		for (var i = 0; i < channelIds.channelId['todo_list'].length; i++) {
-			channelIds.channelId['attachments'][0]['text'] += ((i + 1) + ') ' + channelIds.channelId['todo_list'][i] + '\n');
+	var addTask = function(userId, todoText) {
+		UserIds.userId['todo_list'].unshift(todoText);
+		UserIds.userId['attachments'][0]['text'] = '';
+		for (var i = 0; i < UserIds.userId['todo_list'].length; i++) {
+			UserIds.userId['attachments'][0]['text'] += ((i + 1) + ') ' + UserIds.userId['todo_list'][i] + '\n');
 		}
 	};
 
-	var removeTask = function(channelId, indexInList) {
-		channelIds.channelId['todo_list'].splice(indexInList - 1, 1);
-		channelIds.channelId['attachments'][0]['text'] = '';
-		for (var i = 0; i < channelIds.channelId['todo_list'].length; i++) {
-			channelIds.channelId['attachments'][0]['text'] += ((i + 1) + ') ' + channelIds.channelId['todo_list'][i] + '\n');
-		}
+	var removeTask = function(userId, indexInList) {
+		UserIds.userId['todo_list'].splice(indexInList - 1, 1);
+		return
+		regenerateTaskText(userId);
 	};
+
+	var regenerateTaskText = function(userId) {
+		UserIds.userId['attachments'][0]['text'] = '';
+		for (var i = 0; i < UserIds.userId['todo_list'].length; i++) {
+			UserIds.userId['attachments'][0]['text'] += ((i + 1) + ') ' + UserIds.userId['todo_list'][i] + '\n');
+		}
+	}
 
 	return {
 		init: function() {
