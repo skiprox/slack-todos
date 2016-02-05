@@ -6,7 +6,7 @@ app.use(express.static(__dirname + '/'));
 
 var SlackTodos = (function() {
 
-	var slackToken = ''
+	var slackToken = '';
 	var UserIds = {};
 	var userId = null;
 	var request = null;
@@ -17,6 +17,9 @@ var SlackTodos = (function() {
 		});
 	};
 
+	/**
+	 * Set up the listener, and repond to todo list requests
+	 */
 	var setupListener = function() {
 		app.get('/', function(req, res) {
 			if (req.query['token'] === slackToken) {
@@ -25,9 +28,7 @@ var SlackTodos = (function() {
 				// Create the user response if undefined
 				if (UserIds[userId] == undefined) {
 					UserIds[userId] = {
-						'response_type': 'in_channel',
 						'text': 'Here are your Todos',
-						'userId': userId,
 						'attachments': [
 							{
 								'text': ''
@@ -66,22 +67,33 @@ var SlackTodos = (function() {
 		});
 	};
 
+	/**
+	 * Add a task to the list
+	 * @param {String} todoText [The text to add to the todo list]
+	 */
 	var addTask = function(todoText) {
 		UserIds[userId]['todo_list'].unshift(todoText);
 		regenerateTaskText();
 	};
 
+	/**
+	 * Remove a task from the list
+	 * @param  {Integer} indexInList [The number of the item to remove]
+	 */
 	var removeTask = function(indexInList) {
 		UserIds[userId]['todo_list'].splice(indexInList - 1, 1);
 		regenerateTaskText();
 	};
 
+	/**
+	 * Regenerate the text to send in the response, based on the todolist array
+	 */
 	var regenerateTaskText = function() {
 		UserIds[userId]['attachments'][0]['text'] = '';
 		for (var i = 0; i < UserIds[userId]['todo_list'].length; i++) {
 			UserIds[userId]['attachments'][0]['text'] += ((i + 1) + ') ' + UserIds[userId]['todo_list'][i] + '\n');
 		}
-	}
+	};
 
 	return {
 		init: function() {
