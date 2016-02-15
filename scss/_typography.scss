@@ -1,0 +1,11 @@
+@for $i from 1 through 5 {
+	h#{$i} {
+		font-size: 84px - ($i * 12);
+		@include viewport(medium) {
+			font-size: 64px - ($i * 8);
+		}
+		@include viewport(small) {
+			font-size: 44px - ($i * 4)
+		}
+	}
+}

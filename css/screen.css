@@ -38,8 +38,79 @@ table {
   border-spacing: 0;
 }
 
+/* TABLET AND MOBILE BREAKPOINTS */
 body {
   font-family: 'helvetica', sans-serif;
+}
+
+h1 {
+  font-size: 72px;
+}
+@media (max-width: 1023px) {
+  h1 {
+    font-size: 56px;
+  }
+}
+@media (max-width: 767px) {
+  h1 {
+    font-size: 40px;
+  }
+}
+
+h2 {
+  font-size: 60px;
+}
+@media (max-width: 1023px) {
+  h2 {
+    font-size: 48px;
+  }
+}
+@media (max-width: 767px) {
+  h2 {
+    font-size: 36px;
+  }
+}
+
+h3 {
+  font-size: 48px;
+}
+@media (max-width: 1023px) {
+  h3 {
+    font-size: 40px;
+  }
+}
+@media (max-width: 767px) {
+  h3 {
+    font-size: 32px;
+  }
+}
+
+h4 {
+  font-size: 36px;
+}
+@media (max-width: 1023px) {
+  h4 {
+    font-size: 32px;
+  }
+}
+@media (max-width: 767px) {
+  h4 {
+    font-size: 28px;
+  }
+}
+
+h5 {
+  font-size: 24px;
+}
+@media (max-width: 1023px) {
+  h5 {
+    font-size: 24px;
+  }
+}
+@media (max-width: 767px) {
+  h5 {
+    font-size: 24px;
+  }
 }
 
 /*# sourceMappingURL=screen.css.map */

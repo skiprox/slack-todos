@@ -1,0 +1,13 @@
+/* TABLET AND MOBILE BREAKPOINTS */
+@mixin viewport($size) {
+	@if $size == medium {
+		@media (max-width:$medium) {
+			@content;
+		}
+	}
+	@if $size == small {
+		@media (max-width:$small) {
+			@content;
+		}
+	}
+}
